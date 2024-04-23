@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <string.h>
+#include "contatos.h"
+
+ERROS criar(Agenda contatos[], int *pos){
+    if(*pos >= TOTAL)
+        return MAX_AGENDA;
+
+    printf("Entre com o nome do contato: ");
+    scanf("%s", &contatos[*pos].nome);
+    clearBuffer();
+
+    printf("Entre com o email: ");
+    scanf("%s", &contatos[*pos].email);
+
+    printf("Entre com o telefone: ");
+    scanf("%d", &contatos[*pos].telefone);
+
+    *pos = *pos + 1;
+
+    return OK;
+}
+
+ERROS deletar(Agenda contatos[], int *pos){
+    if(*pos == 0)
+        return SEM_CONTATOS;
+
+    int pos_deletar;
+    printf("Entre com o numero do contato que deseja deletar: ");
+    scanf("%d", &pos_deletar);
+    pos_deletar--;
+    if(pos_deletar >= *pos || pos_deletar < 0)
+        return NAO_ENCONTRADO;
+
+    for(int i = pos_deletar; i < *pos; i++){
+        contatos[i].telefone = contatos[i+1].telefone;
+        strcpy(contatos[i].nome, contatos[i+1].nome);
+        strcpy(contatos[i].email,  contatos[i+1].email);
+    }
+
+    *pos = *pos - 1;
+
+    return OK;
+}
+
+ERROS listar(Agenda contatos[], int *pos){
+    if(*pos == 0)
+        return SEM_CONTATOS;
+
+    for(int i=0; i<*pos; i++){
+        printf("Pos: %d\t", i+1);
+        printf("Nome: %c\t", contatos[i].nome);
+        printf("email: %c\t", contatos[i].email);
+        printf("telefone: %d\n", contatos[i].telefone);
+    }
+
+    return OK;
+}
+
+ERROS salvar(Agenda contatos[], int *pos, int tamanho){
+    FILE *f = fopen("agenda.bin", "wb");
+    if(f == NULL)
+        return ABRIR;
+
+    int qtd = fwrite(contatos, TOTAL, sizeof(Agenda), f);
+    if(qtd == 0)
+        return ESCREVER;
+
+    qtd = fwrite(pos, 1, sizeof(int), f);
+    if(qtd == 0)
+        return ESCREVER;
+
+    if(fclose(f))
+        return FECHAR;
+
+    return OK;
+}
+
+ERROS carregar(Agenda contatos[], int *pos, int tamanho){
+  FILE *f = fopen("agenda.bin", "rb");
+  if (f == NULL)
+    return ABRIR;
+
+  int i = fread(contatos, tamanho, sizeof(Agenda), f);
+  if(i <= 0)
+    return LER;
+
+  i = fread(pos, 1, sizeof(int), f);
+  if(i <= 0)
+    return LER;
+  
+  i = fclose(f);
+  if(i == 0)
+    return FECHAR;
+  
+  return OK;
+
+}
