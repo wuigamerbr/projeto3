@@ -49,9 +49,9 @@ ERROS listar(Agenda contatos[], int *pos){
         return SEM_CONTATOS;
 
     for(int i=0; i<*pos; i++){
-        printf("Pos: %c\t", i+1);
+        printf("Pos: %d\t", i+1);
         printf("Nome: %c\t", contatos[i].nome);
-        printf("email: %d\t", contatos[i].email);
+        printf("email: %c\t", contatos[i].email);
         printf("telefone: %d\n", contatos[i].telefone);
     }
 
