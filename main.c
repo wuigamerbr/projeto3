@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include "contatos.h"
 
-int main(){
+int main() {
     int opcao;
     int pos = 0;
     Agenda contatos[TOTAL];
 
-    do{
+    do {
         printf("\nMenu principal\n");
         printf("1 - Criar contato\n");
         printf("2 - Deletar contato\n");
@@ -16,39 +16,43 @@ int main(){
         printf("5 - Carregar agenda\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
-scanf("%d", &opcao);
-    printf("Opcao escolhida: %d\n", opcao);
+        scanf("%d", &opcao);
+        printf("Opcao escolhida: %d\n", opcao);
 
-    if (opcao == 1) {
-      ERROS erro = criar(contatos, &pos);
-      if(erro == MAX_AGENDA)
-        printf("Maximo de tarefas atingido\n");
+        switch (opcao) {
+            case 1:
+                criar(contatos, &pos);
+                break;
+            case 2: {
+                char telefone_a_remover[20];
+                printf("Digite o número de telefone do contato que deseja remover: ");
+                scanf("%19s", telefone_a_remover);
+                deletar(contatos, telefone_a_remover, &pos);
+                break;
+}
+            case 3:
+                listar(contatos, &pos);
+                break;
+            case 4:
+                salvar(contatos, &pos, TOTAL);
+                break;
+            case 5:
+                carregar(contatos, &pos, TOTAL);
+                break;
+            case 0:
+                printf("Saindo...\n");
+                break;
+            default:
+                printf("Opcao invalida\n");
+        }
+    } while (opcao != 0);
 
-    } else if (opcao == 2) {
-      ERROS erro = deletar(contatos, &pos);
-      if(erro == SEM_CONTATOS)
-        printf("Tarefa nao encontrada\n");
-    } else if (opcao == 3) {
-      ERROS erro = listar(contatos, &pos);
-      if(erro == SEM_CONTATOS)
-        printf("Nao ha tarefas\n");
-      listar(contatos, &pos);
-    } else if (opcao == 0)
-      printf("Sair...\n");
-      ERROS erro = salvar(contatos, &pos, TOTAL);
-      if(erro == LER || erro == FECHAR)
-        printf("Erro ao ler as tarefas do arquivo\n");
-      else if (erro == ABRIR){
-        pos = 0;
-        printf("Arquivo não encontrado\n");
-      }
-      else
-        printf("Opcao invalida\n");
-
-  } while (opcao != 0);
+    return 0;
 }
 
-void clearBuffer(){
-    int c;
-    while ((c = getchar()) != '\n' && c != EOF);
-}
+
+
+
+
+
+
