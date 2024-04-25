@@ -7,14 +7,14 @@ ERROS criar(Agenda contatos[], int *pos){
         return MAX_AGENDA;
 
     printf("Entre com o nome do contato: ");
-    scanf("%s", &contatos[*pos].nome);
+    scanf("%d", &contatos[*pos].nome);
     clearBuffer();
 
     printf("Entre com o email: ");
-    scanf("%s", &contatos[*pos].email);
+    scanf("%s", &contatos[*pos].email, 255, stdin);
 
     printf("Entre com o telefone: ");
-    scanf("%d", &contatos[*pos].telefone);
+    scanf("%s", &contatos[*pos].telefone, 255, stdin);
 
     *pos = *pos + 1;
 
@@ -23,6 +23,7 @@ ERROS criar(Agenda contatos[], int *pos){
 
 ERROS deletar(Agenda contatos[], int *pos){
     if(*pos == 0)
+        printf("Não há dados a serem apagados\n");
         return SEM_CONTATOS;
 
     int pos_deletar;
@@ -34,8 +35,8 @@ ERROS deletar(Agenda contatos[], int *pos){
 
     for(int i = pos_deletar; i < *pos; i++){
         contatos[i].telefone = contatos[i+1].telefone;
-        strcpy(contatos[i].nome, contatos[i+1].nome);
-        strcpy(contatos[i].email,  contatos[i+1].email);
+        strcpy(contatos[i].nome,contatos[i+1].nome);
+        strcpy(contatos[i].email, contatos[i+1].email);
     }
 
     *pos = *pos - 1;
@@ -49,28 +50,35 @@ ERROS listar(Agenda contatos[], int *pos){
 
     for(int i=0; i<*pos; i++){
         printf("Pos: %d\t", i+1);
-        printf("Nome: %c\t", contatos[i].nome);
-        printf("email: %c\t", contatos[i].email);
+        printf("Nome: %d\t", contatos[i].nome);
+        printf("email: %d\t", contatos[i].email);
         printf("telefone: %d\n", contatos[i].telefone);
     }
 
     return OK;
 }
 
-ERROS salvar(Agenda contatos[], int *pos, int tamanho){
+ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
     FILE *f = fopen("agenda.bin", "wb");
-    if(f == NULL)
+    if (f == NULL)
         return ABRIR;
 
-    int qtd = fwrite(contatos, TOTAL, sizeof(Agenda), f);
-    if(qtd == 0)
-        return ESCREVER;
+    // Escrever cada contato no arquivo
+    for (int i = 0; i < *pos; i++) {
+        if (fwrite(&contatos[i], sizeof(Agenda), 1, f) != 1) {
+            fclose(f);
+            return ESCREVER;
+        }
+    }
 
-    qtd = fwrite(pos, 1, sizeof(int), f);
-    if(qtd == 0)
+    // Escrever o número total de contatos no arquivo
+    if (fwrite(pos, sizeof(int), 1, f) != 1) {
+        fclose(f);
         return ESCREVER;
+    }
 
-    if(fclose(f))
+    // Fechar o arquivo após salvar os contatos e o número total
+    if (fclose(f) != 0)
         return FECHAR;
 
     return OK;
