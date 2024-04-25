@@ -23,6 +23,7 @@ ERROS criar(Agenda contatos[], int *pos){
 
 ERROS deletar(Agenda contatos[], int *pos){
     if(*pos == 0)
+
         return SEM_CONTATOS;
 
     int pos_deletar;
@@ -48,29 +49,36 @@ ERROS listar(Agenda contatos[], int *pos){
         return SEM_CONTATOS;
 
     for(int i=0; i<*pos; i++){
-        printf("Pos: %d\t", i+1);
+        printf("Pos: %c\t", i+1);
         printf("Nome: %c\t", contatos[i].nome);
-        printf("email: %c\t", contatos[i].email);
+        printf("email: %d\t", contatos[i].email);
         printf("telefone: %d\n", contatos[i].telefone);
     }
 
     return OK;
 }
 
-ERROS salvar(Agenda contatos[], int *pos, int tamanho){
+ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
     FILE *f = fopen("agenda.bin", "wb");
-    if(f == NULL)
+    if (f == NULL)
         return ABRIR;
 
-    int qtd = fwrite(contatos, TOTAL, sizeof(Agenda), f);
-    if(qtd == 0)
-        return ESCREVER;
+    // Escrever cada contato no arquivo
+    for (int i = 0; i < *pos; i++) {
+        if (fwrite(&contatos[i], sizeof(Agenda), 1, f) != 1) {
+            fclose(f);
+            return ESCREVER;
+        }
+    }
 
-    qtd = fwrite(pos, 1, sizeof(int), f);
-    if(qtd == 0)
+    // Escrever o número total de contatos no arquivo
+    if (fwrite(pos, sizeof(int), 1, f) != 1) {
+        fclose(f);
         return ESCREVER;
+    }
 
-    if(fclose(f))
+    // Fechar o arquivo após salvar os contatos e o número total
+    if (fclose(f) != 0)
         return FECHAR;
 
     return OK;
