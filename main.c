@@ -16,8 +16,8 @@ int main(){
         printf("5 - Carregar agenda\n");
         printf("0 - Sair\n");
         printf("Escolha uma opcao: ");
-scanf("%d", &opcao);
-    printf("Opcao escolhida: %d\n", opcao);
+        scanf("%d", &opcao);
+        printf("Opcao escolhida: %d\n", opcao);
 
     if (opcao == 1) {
       ERROS erro = criar(contatos, &pos);
@@ -41,13 +41,11 @@ scanf("%d", &opcao);
       else if (erro == ABRIR){
         pos = 0;
         printf("Arquivo não encontrado\n");
-      }
-      else
+      }else
         printf("Opcao invalida\n");
-
   } while (opcao != 0);
-}
 
+}
 void clearBuffer(){
     int c;
     while ((c = getchar()) != '\n' && c != EOF);

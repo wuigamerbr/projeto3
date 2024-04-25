@@ -7,14 +7,14 @@ ERROS criar(Agenda contatos[], int *pos){
         return MAX_AGENDA;
 
     printf("Entre com o nome do contato: ");
-    scanf("%d", &contatos[*pos].nome);
+    scanf("%s", &contatos[*pos].nome);
     clearBuffer();
 
     printf("Entre com o email: ");
-    scanf("%s", &contatos[*pos].email, 255, stdin);
+    scanf("%s", &contatos[*pos].email);
 
     printf("Entre com o telefone: ");
-    scanf("%s", &contatos[*pos].telefone, 255, stdin);
+    scanf("%d", &contatos[*pos].telefone);
 
     *pos = *pos + 1;
 
@@ -23,7 +23,7 @@ ERROS criar(Agenda contatos[], int *pos){
 
 ERROS deletar(Agenda contatos[], int *pos){
     if(*pos == 0)
-        printf("Não há dados a serem apagados\n");
+
         return SEM_CONTATOS;
 
     int pos_deletar;
@@ -35,8 +35,8 @@ ERROS deletar(Agenda contatos[], int *pos){
 
     for(int i = pos_deletar; i < *pos; i++){
         contatos[i].telefone = contatos[i+1].telefone;
-        strcpy(contatos[i].nome,contatos[i+1].nome);
-        strcpy(contatos[i].email, contatos[i+1].email);
+        strcpy(contatos[i].nome, contatos[i+1].nome);
+        strcpy(contatos[i].email,  contatos[i+1].email);
     }
 
     *pos = *pos - 1;
@@ -49,8 +49,8 @@ ERROS listar(Agenda contatos[], int *pos){
         return SEM_CONTATOS;
 
     for(int i=0; i<*pos; i++){
-        printf("Pos: %d\t", i+1);
-        printf("Nome: %d\t", contatos[i].nome);
+        printf("Pos: %c\t", i+1);
+        printf("Nome: %c\t", contatos[i].nome);
         printf("email: %d\t", contatos[i].email);
         printf("telefone: %d\n", contatos[i].telefone);
     }
