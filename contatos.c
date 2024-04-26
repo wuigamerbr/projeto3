@@ -102,3 +102,5 @@ ERROS carregar(Agenda contatos[], int *pos, int tamanho){
     return FECHAR;
   
   return OK;
+
+}
