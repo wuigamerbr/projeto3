@@ -1,58 +1,74 @@
 #include <stdio.h>
 #include <string.h>
 #include "contatos.h"
+#include <ctype.h>
 
-ERROS criar(Agenda contatos[], int *pos){
-    if(*pos >= TOTAL)
+ERROS criar(Agenda contatos[], int *pos) {
+    if (*pos >= TOTAL)
         return MAX_AGENDA;
 
     printf("Entre com o nome do contato: ");
-    scanf("%s", &contatos[*pos].nome);
+    scanf("%99s", contatos[*pos].nome);
     clearBuffer();
 
     printf("Entre com o email: ");
-    scanf("%s", &contatos[*pos].email);
+    scanf("%99s", contatos[*pos].email);
+    clearBuffer();
 
     printf("Entre com o telefone: ");
-    scanf("%d", &contatos[*pos].telefone);
+    scanf("%19s", contatos[*pos].telefone);
+    clearBuffer();
 
-    *pos = *pos + 1;
+    (*pos)++;
 
     return OK;
 }
 
 ERROS deletar(Agenda contatos[], int *pos){
     if(*pos == 0)
-
+ERROS listar(Agenda contatos[], int *pos) {
+    if (*pos == 0)
         return SEM_CONTATOS;
 
-    int pos_deletar;
-    printf("Entre com o numero do contato que deseja deletar: ");
-    scanf("%d", &pos_deletar);
-    pos_deletar--;
-    if(pos_deletar >= *pos || pos_deletar < 0)
-        return NAO_ENCONTRADO;
-
-    for(int i = pos_deletar; i < *pos; i++){
-        contatos[i].telefone = contatos[i+1].telefone;
-        strcpy(contatos[i].nome, contatos[i+1].nome);
-        strcpy(contatos[i].email,  contatos[i+1].email);
+    for (int i = 0; i < *pos; i++) {
+        printAgenda(contatos[i], i + 1);
     }
-
-    *pos = *pos - 1;
 
     return OK;
 }
 
-ERROS listar(Agenda contatos[], int *pos){
-    if(*pos == 0)
-        return SEM_CONTATOS;
 
+
+ERROS deletar(Agenda contatos[], char *telefone, int *pos) {
+    int i;
+    int encontrado = 0;
+
+    if (*pos <= 0) {
+        return SEM_CONTATOS;
+    }
+
+    for (i = 0; i < *pos; i++) {
+        if (strcmp(contatos[i].telefone, telefone) == 0) {
+            encontrado = 1;
+
+            for (int j = i; j < *pos - 1; j++) {
+                strcpy(contatos[j].nome, contatos[j + 1].nome);
+                strcpy(contatos[j].email, contatos[j + 1].email);
+                strcpy(contatos[j].telefone, contatos[j + 1].telefone);
+            }
+            (*pos)--;
+            printf("Contato removido com sucesso!\n");
+            break;
+        }
+    }
     for(int i=0; i<*pos; i++){
         printf("Pos: %c\t", i+1);
         printf("Nome: %c\t", contatos[i].nome);
         printf("email: %d\t", contatos[i].email);
         printf("telefone: %d\n", contatos[i].telefone);
+    if (!encontrado) {
+        printf("Contato com o número de telefone %s não encontrado.\n", telefone);
+        return NAO_ENCONTRADO;
     }
 
     return OK;
@@ -62,45 +78,52 @@ ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
     FILE *f = fopen("agenda.bin", "wb");
     if (f == NULL)
         return ABRIR;
-
-    // Escrever cada contato no arquivo
     for (int i = 0; i < *pos; i++) {
         if (fwrite(&contatos[i], sizeof(Agenda), 1, f) != 1) {
             fclose(f);
             return ESCREVER;
         }
     }
-
-    // Escrever o número total de contatos no arquivo
     if (fwrite(pos, sizeof(int), 1, f) != 1) {
         fclose(f);
+    int qtd = fwrite(contatos, sizeof(Agenda), *pos, f);
+    if (qtd != *pos)
+        return ESCREVER;
+
+    if (fwrite(pos, sizeof(int), 1, f) != 1)
         return ESCREVER;
     }
-
-    // Fechar o arquivo após salvar os contatos e o número total
     if (fclose(f) != 0)
         return FECHAR;
 
     return OK;
 }
 
-ERROS carregar(Agenda contatos[], int *pos, int tamanho){
-  FILE *f = fopen("agenda.bin", "rb");
-  if (f == NULL)
-    return ABRIR;
+ERROS carregar(Agenda contatos[], int *pos, int tamanho) {
+    FILE *f = fopen("agenda.bin", "rb");
+    if (f == NULL)
+        return ABRIR;
 
-  int i = fread(contatos, tamanho, sizeof(Agenda), f);
-  if(i <= 0)
-    return LER;
+    int i = fread(contatos, sizeof(Agenda), tamanho, f);
+    if (i != *pos)
+        return LER;
 
-  i = fread(pos, 1, sizeof(int), f);
-  if(i <= 0)
-    return LER;
-  
-  i = fclose(f);
-  if(i == 0)
-    return FECHAR;
-  
-  return OK;
+    if (fread(pos, sizeof(int), 1, f) != 1)
+        return LER;
 
+    if (fclose(f) != 0)
+        return FECHAR;
+
+    return OK;
+}
+
+void printAgenda(Agenda contatos, int pos) {
+    printf("\nPosicao: %d\t", pos);
+    printf("Nome: %s\tEmail: %s\t", contatos.nome, contatos.email);
+    printf("Telefone: %s\n", contatos.telefone);
+}
+
+void clearBuffer() {
+    int c;
+    while ((c = getchar()) != '\n' && c != EOF);
 }
