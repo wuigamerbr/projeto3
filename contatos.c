@@ -68,7 +68,6 @@ ERROS deletar(Agenda contatos[], char *telefone, int *pos) {
     return OK;
     }
 }
-}
 ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
     FILE *f = fopen("agenda.bin", "wb");
     if (f == NULL)
