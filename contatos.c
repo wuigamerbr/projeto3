@@ -23,9 +23,6 @@ ERROS criar(Agenda contatos[], int *pos) {
 
     return OK;
 }
-
-ERROS deletar(Agenda contatos[], int *pos){
-    if(*pos == 0)
 ERROS listar(Agenda contatos[], int *pos) {
     if (*pos == 0)
         return SEM_CONTATOS;
@@ -36,8 +33,6 @@ ERROS listar(Agenda contatos[], int *pos) {
 
     return OK;
 }
-
-
 
 ERROS deletar(Agenda contatos[], char *telefone, int *pos) {
     int i;
@@ -63,15 +58,16 @@ ERROS deletar(Agenda contatos[], char *telefone, int *pos) {
     }
     for(int i=0; i<*pos; i++){
         printf("Pos: %c\t", i+1);
-        printf("Nome: %c\t", contatos[i].nome);
-        printf("email: %d\t", contatos[i].email);
-        printf("telefone: %d\n", contatos[i].telefone);
+        printf("Nome: %s\t", contatos[i].nome);
+        printf("email: %s\t", contatos[i].email);
+        printf("telefone: %s\n", contatos[i].telefone);
     if (!encontrado) {
         printf("Contato com o número de telefone %s não encontrado.\n", telefone);
         return NAO_ENCONTRADO;
     }
 
     return OK;
+    }
 }
 
 ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
@@ -123,7 +119,9 @@ void printAgenda(Agenda contatos, int pos) {
     printf("Telefone: %s\n", contatos.telefone);
 }
 
+
 void clearBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+
 }
