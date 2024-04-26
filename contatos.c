@@ -22,7 +22,6 @@ ERROS criar(Agenda contatos[], int *pos) {
 
     return OK;
 }
-
 ERROS listar(Agenda contatos[], int *pos) {
     if (*pos == 0)
         printf("Sem contatos para exibir!");
@@ -67,6 +66,7 @@ ERROS deletar(Agenda contatos[], char *telefone, int *pos) {
     }
 
     return OK;
+    }
 }
 }
 ERROS salvar(Agenda contatos[], int *pos, int tamanho) {
@@ -117,7 +117,9 @@ void printAgenda(Agenda contatos, int pos) {
     printf("Telefone: %s\n", contatos.telefone);
 }
 
+
 void clearBuffer() {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+
 }
